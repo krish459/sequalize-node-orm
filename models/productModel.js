@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER
         },
         description: {
+            // Check this TEXT returning null
             type: DataTypes.TEXT
         },
         published: {
