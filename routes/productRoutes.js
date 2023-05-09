@@ -14,4 +14,6 @@ router.delete("/deleteproduct/:id", productControllers.deleteProduct);
 
 router.get("/published", productControllers.getPublishedProduct);
 
+router.get("/productreviews/:id", productControllers.getProductReviews);
+
 module.exports = router

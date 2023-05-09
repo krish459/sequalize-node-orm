@@ -53,6 +53,18 @@ const getPublishedProduct = async(req,res)=>{
 }
 
 // 7. one to many product and reviews
+const getProductReviews = async(req,res)=>{
+  let id = req.params.id
+  const data = await Product.findAll({
+    include: [{
+      model: Review,
+      as: "review"
+    }],
+    where: {id: id}
+  })
+
+  res.status(200).send(data)
+}
 
   module.exports = {
     addproduct,
@@ -60,5 +72,6 @@ const getPublishedProduct = async(req,res)=>{
     getOneProduct,
     updateProduct,
     deleteProduct,
-    getPublishedProduct
+    getPublishedProduct,
+    getProductReviews
   }
