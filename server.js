@@ -20,6 +20,7 @@ const productRouter = require("./routes/productRoutes");
 const reviewRouter = require("./routes/reviewRoute");
 
 app.use("/api/products", productRouter);
+// testing done
 app.use("/api/reviews", reviewRouter);
 
 // testing api
