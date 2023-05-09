@@ -52,6 +52,8 @@ const getPublishedProduct = async(req,res)=>{
     res.status(200).send(products)
 }
 
+// 7. one to many product and reviews
+
   module.exports = {
     addproduct,
     getAllProducts,

@@ -1,45 +1,50 @@
 const dbConfig = require("../config/dbConfig");
 
-const {Sequelize, DataTypes} = require('sequelize')
+const { Sequelize, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize(
-    dbConfig.DB,
-    dbConfig.USER,
-    dbConfig.PASSWORD, {
-        host: dbConfig.HOST,
-        dialect: dbConfig.dialect,
-        operatorsAliases: false,
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+  host: dbConfig.HOST,
+  dialect: dbConfig.dialect,
+  operatorsAliases: false,
 
+  pool: {
+    max: dbConfig.pool.max,
+    min: dbConfig.pool.min,
+    acquire: dbConfig.pool.acquire,
+    idle: dbConfig.pool.idle,
+  },
+});
 
-        pool:{
-            max: dbConfig.pool.max,
-            min: dbConfig.pool.min,
-            acquire: dbConfig.pool.acquire,
-            idle: dbConfig.pool.idle,
-        }
-    }
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => {
+    console.log("Error" + err);
+  });
 
-)
+const db = {};
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-sequelize.authenticate()
-.then(()=>{
-    console.log('Connected to DB');
-})
-.catch(err=>{
-    console.log('Error'+ err);
-})
+db.products = require("./productModel.js")(sequelize, DataTypes);
+db.reviews = require("./reviewModel.js")(sequelize, DataTypes);
 
-const db = {}
-db.Sequelize = Sequelize
-db.sequelize = sequelize
+db.sequelize
+  .sync({ force: false }) // wont create tables again everytime you run it
+  .then(() => {
+    console.log("Yes re-sync done!");
+  });
 
-db.products = require('./productModel.js')(sequelize, DataTypes)
-db.reviews = require('./reviewModel.js')(sequelize, DataTypes)
+// 1 to many relationship
+db.products.hasMany(db.reviews, {
+  foreignKey: "product_id",
+  as: "review",
+});
+db.reviews.belongsTo(db.products, {
+  foreignKey: "product_id",
+  as: "product",
+});
 
-db.sequelize.sync({force: false}) // wont create tables again everytime you run it
-.then(()=>{
-    console.log('Yes re-sync done!');
-})
-
-module.exports = db
-
+module.exports = db;
